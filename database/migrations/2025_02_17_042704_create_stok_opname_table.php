@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('stok_opname', function (Blueprint $table) {
             $table->char('id', 36)->primary();
-            $table->char('id_stok', 36);
+            $table->char('id_produk', 36);
             $table->string('jenis_perubahan');
             $table->integer('jumlah_perubahan');
-            $table->string('satuan');
             $table->timestamps();
 
-            $table->foreign('id_stok')->references('id')->on('stok_produk')->onDelete('cascade');
+            $table->foreign('id_produk')->references('id')->on('produk')->onDelete('cascade');
         });
     }
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('diskon')->nullable();
             $table->integer('jumlah_produk_terjual');
             $table->integer('total_transaksi');
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
     
             $table->foreign('id_customer')->references('id')->on('customer')->onDelete('cascade');

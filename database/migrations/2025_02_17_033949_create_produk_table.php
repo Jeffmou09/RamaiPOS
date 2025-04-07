@@ -14,13 +14,9 @@ return new class extends Migration
         Schema::create('produk', function (Blueprint $table) {
             $table->char('id', 36)->primary();
             $table->string('nama_produk');
-            $table->string('satuan');
-            $table->integer('isi_per_satuan');
-            $table->string('jenis_isi');
-            $table->integer('harga_beli_per_satuan');
-            $table->integer('harga_beli_per_isi');
-            $table->integer('harga_jual_per_satuan');
-            $table->integer('harga_jual_per_isi');
+            $table->integer('stok');
+            $table->integer('harga_beli');
+            $table->integer('harga_jual');
             $table->timestamps();
         });
     }

@@ -18,68 +18,30 @@
             <form action="{{ route('daftarproduk.store') }}" method="POST">
                 @csrf
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
                         <label class="form-label">Nama Produk</label>
                         <input type="text" name="nama_produk" class="form-control" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Satuan</label>
-                        <select name="satuan" class="form-control" required>
-                            <option value="">-- Pilih Satuan --</option>
-                            <option value="SAK">SAK</option>
-                            <option value="DUS">DUS</option>
-                        </select>
-                    </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Isi per Satuan</label>
-                        <input type="number" name="isi_per_satuan" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Jenis Isi</label>
-                        <select name="jenis_isi" class="form-control" required>
-                            <option value="">-- Pilih Jenis Isi --</option>
-                            <option value="PCS">PCS</option>
-                            <option value="KG">KG</option>
-                        </select>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Stok</label>
+                    <input type="number" name="stok" class="form-control" required>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Harga Beli per Satuan</label>
+                <div class="mb-3">
+                    <label class="form-label">Harga Beli</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="harga_beli_per_satuan" class="form-control" required>
+                        <input type="number" name="harga_beli" class="form-control" required>
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Harga Jual per Satuan</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number" name="harga_jual_per_satuan" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Harga Jual per Isi</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number" name="harga_jual_per_isi" class="form-control" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card bg-light mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Stok Awal</h5>
-                        <div class="mb-3">
-                            <label class="form-label">Stok Satuan Utama</label>
-                            <input type="number" name="stok_satuan_utama" class="form-control" required>
-                        </div>
+                <div class="mb-4">
+                    <label class="form-label">Harga Jual</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="number" name="harga_jual" class="form-control" required>
                     </div>
                 </div>
                 

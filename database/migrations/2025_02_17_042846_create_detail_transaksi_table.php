@@ -16,7 +16,6 @@ return new class extends Migration
             $table->char('id_produk', 36);
             $table->char('id_transaksi', 36);
             $table->integer('jumlah_barang');
-            $table->string('jenis_satuan');
             $table->integer('sub_total');
             $table->timestamps();
     

@@ -18,55 +18,35 @@
             <form action="{{ route('daftarproduk.update', $produk->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Nama Produk</label>
-                        <input type="text" name="nama_produk" class="form-control" value="{{ $produk->nama_produk }}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Satuan</label>
-                        <select name="satuan" class="form-control" required>
-                            <option value="SAK" {{ $produk->satuan == 'SAK' ? 'selected' : '' }}>SAK</option>
-                            <option value="DUS" {{ $produk->satuan == 'DUS' ? 'selected' : '' }}>DUS</option>
-                        </select>
+                
+                <div class="mb-3">
+                    <label class="form-label">ID Produk</label>
+                    <input type="text" class="form-control" value="{{ $produk->id }}" disabled>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Nama Produk</label>
+                    <input type="text" name="nama_produk" class="form-control" value="{{ $produk->nama_produk }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Stok</label>
+                    <input type="number" name="stok" class="form-control" value="{{ $produk->stok }}" disabled>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Harga Beli</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="number" name="harga_beli" class="form-control" value="{{ $produk->harga_beli }}" required>
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Isi per Satuan</label>
-                        <input type="number" name="isi_per_satuan" class="form-control" value="{{ $produk->isi_per_satuan }}" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Jenis Isi</label>
-                        <select name="jenis_isi" class="form-control" required>
-                            <option value="PCS" {{ $produk->jenis_isi == 'PCS' ? 'selected' : '' }}>PCS</option>
-                            <option value="KG" {{ $produk->jenis_isi == 'KG' ? 'selected' : '' }}>KG</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Harga Beli per Satuan</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number" name="harga_beli_per_satuan" class="form-control" value="{{ $produk->harga_beli_per_satuan }}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Harga Jual per Satuan</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number" name="harga_jual_per_satuan" class="form-control" value="{{ $produk->harga_jual_per_satuan }}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Harga Jual per Isi</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number" name="harga_jual_per_isi" class="form-control" value="{{ $produk->harga_jual_per_isi }}" required>
-                        </div>
+                <div class="mb-4">
+                    <label class="form-label">Harga Jual</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="number" name="harga_jual" class="form-control" value="{{ $produk->harga_jual }}" required>
                     </div>
                 </div>
                 

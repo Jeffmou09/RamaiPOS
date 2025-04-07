@@ -17,14 +17,13 @@ class StokOpname extends Model
 
     protected $fillable = [
         'id',
-        'id_stok',
+        'id_produk',
         'jenis_perubahan',
-        'jumlah_perubahan',
-        'satuan',
+        'jumlah_perubahan'
     ];
 
-    public function stok()
+    public function produk()
     {
-        return $this->belongsTo(StokProduk::class, 'id_stok');
+        return $this->belongsTo(Produk::class, 'id_produk');
     }
 }

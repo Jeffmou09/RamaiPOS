@@ -9,45 +9,37 @@
                     <i class="fas fa-plus me-1"></i> Tambah Produk
                 </a>
             </div>
-            
             @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
             </div>
             @endif
-            
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr class="bg-light">
+                            <th>ID Produk</th>
                             <th>Nama Produk</th>
-                            <th>Satuan</th>
-                            <th>Isi per Satuan</th>
-                            <th>Jenis Isi</th>
-                            <th>Harga Beli per Satuan</th>
-                            <th>Harga Beli per Isi</th>
-                            <th>Harga Jual per Satuan</th>
-                            <th>Harga Jual per Isi</th>
+                            <th>Stok</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
                             <th class="text-center">Opsi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($produks as $produk)
+                        @foreach($produk as $item)
                         <tr>
-                            <td>{{ $produk->nama_produk }}</td>
-                            <td>{{ $produk->satuan }}</td>
-                            <td>{{ $produk->isi_per_satuan }}</td>
-                            <td>{{ $produk->jenis_isi }}</td>
-                            <td>Rp {{ number_format($produk->harga_beli_per_satuan, 2, ',', '.') }}</td>
-                            <td>Rp {{ number_format($produk->harga_beli_per_isi, 2, ',', '.') }}</td>
-                            <td>Rp {{ number_format($produk->harga_jual_per_satuan, 2, ',', '.') }}</td>
-                            <td>Rp {{ number_format($produk->harga_jual_per_isi, 2, ',', '.') }}</td>
+                            <td>{{ $item->id }}</td>
+                            <td>{{ $item->nama_produk }}</td>
+                            <td>{{ $item->stok }}</td>
+                            <td>Rp {{ number_format($item->harga_beli, 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('daftarproduk.editproduk', $produk->id) }}" class="btn btn-sm btn-outline-warning">
+                                    <a href="{{ route('daftarproduk.editproduk', $item->id) }}" class="btn btn-sm btn-outline-warning">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('daftarproduk.destroy', $produk->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('daftarproduk.destroy', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus?');">
