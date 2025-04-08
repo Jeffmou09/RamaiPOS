@@ -32,6 +32,12 @@
     </div>
     @endif
 
+    <!-- Error Alert for JS validation -->
+    <div class="alert alert-danger alert-dismissible fade show rounded-lg border-0 d-none" id="validation-error" style="box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <span id="error-message"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <form id="transaksiForm" action="{{ route('transaksi.store') }}" method="POST">
         @csrf
         <div class="row mb-4">
@@ -68,7 +74,7 @@
         <!-- Form Input Produk -->
         <div class="card border-0 rounded-lg p-4 mb-4" style="box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <div class="row">
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label small">Nama Produk</label>
                     <input type="hidden" name="produk_id" id="produk_id">
                     <input type="text" id="nama_produk" class="form-control" list="produkList" placeholder="Cari produk...">
@@ -80,7 +86,7 @@
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <label class="form-label small">Harga Per Satuan</label>
+                    <label class="form-label small">Harga</label>
                     <input type="text" class="form-control" id="harga_satuan" readonly>
                 </div>
 
@@ -89,14 +95,7 @@
                     <input type="number" class="form-control" id="jumlah" value="1" min="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
 
-                <div class="col-md-2 mb-3">
-                    <label class="form-label small">Jenis Satuan</label>
-                    <select class="form-control" id="jenis_satuan">
-                        <!-- Opsi akan diisi dengan JavaScript -->
-                    </select>
-                </div>
-
-                <div class="col-md-2 mb-3">
+                <div class="col-md-3 mb-3">
                     <label class="form-label small">Harga Akhir</label>
                     <input type="text" class="form-control" id="harga_akhir" readonly>
                 </div>
@@ -116,9 +115,8 @@
                     <thead class="bg-light">
                         <tr>
                             <th>Nama Barang</th>
-                            <th>Harga Satuan</th>
+                            <th>Harga</th>
                             <th>Jumlah</th>
-                            <th>Jenis Satuan</th>
                             <th>Harga Jual</th>
                             <th class="text-center">Opsi</th>
                         </tr>
@@ -135,7 +133,7 @@
         <input type="hidden" name="jumlah_produk_terjual" id="jumlah_produk_terjual" value="0">
         <input type="hidden" name="total_transaksi" id="total_transaksi" value="0">
 
-        <!-- Card Subtotal, Diskon, dan Total Akhir -->
+        <!-- Card Subtotal, Diskon, Total Akhir dan Deskripsi -->
         <div class="d-flex justify-content-end">
             <div class="card border-0 rounded-lg p-4 ms-auto" style="max-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                 <h5 class="mb-3">Ringkasan Pembayaran</h5>
@@ -157,8 +155,14 @@
                     <label class="me-2 mb-0">Total Akhir:</label>
                     <h4 class="mb-0">Rp <span id="total_akhir">0</span></h4>
                 </div>
+                
+                <!-- Deskripsi -->
+                <div class="mb-3">
+                    <label class="form-label">Deskripsi Transaksi:</label>
+                    <textarea name="deskripsi" class="form-control" id="deskripsi" rows="3" placeholder="Tambahkan catatan atau deskripsi transaksi..."></textarea>
+                </div>
 
-                <!-- Tombol Simpan & Batal -->
+                <!-- Tombol Simpan -->
                 <button type="submit" class="btn btn-success w-100" id="simpan_transaksi">
                     <i class="fas fa-save me-1"></i> Simpan Transaksi
                 </button>
@@ -172,7 +176,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const produkInput = document.getElementById("nama_produk");
     const hargaSatuanInput = document.getElementById("harga_satuan");
     const jumlahInput = document.getElementById("jumlah");
-    const jenisSatuanSelect = document.getElementById("jenis_satuan");
     const hargaAkhirInput = document.getElementById("harga_akhir");
     const produkIdInput = document.getElementById("produk_id");
     const simpanItemBtn = document.getElementById("simpan_item");
@@ -183,24 +186,39 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsJsonInput = document.getElementById("items_json");
     const jumlahProdukTerjualInput = document.getElementById("jumlah_produk_terjual");
     const totalTransaksiInput = document.getElementById("total_transaksi");
+    const validationError = document.getElementById("validation-error");
+    const errorMessage = document.getElementById("error-message");
 
     const subtotalElement = document.getElementById("subtotal");
     const diskonInput = document.getElementById("diskon");
     const totalAkhirElement = document.getElementById("total_akhir");
     const transaksiForm = document.getElementById("transaksiForm");
 
+    // Helper function to show errors
+    function showError(message) {
+        errorMessage.textContent = message;
+        validationError.classList.remove('d-none');
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            validationError.classList.add('d-none');
+        }, 5000);
+    }
+
     let produkData = {
         @foreach($produkList as $produk)
             "{{ $produk->nama_produk }}": {
                 id: "{{ $produk->id }}",
-                hargaSatuan: "{{ $produk->harga_jual_per_satuan }}",
-                hargaIsi: "{{ $produk->harga_jual_per_isi }}",
-                isiPerSatuan: "{{ $produk->isi_per_satuan }}",
-                satuanUtama: "{{ $produk->satuan }}",
-                satuanKecil: "{{ $produk->jenis_isi }}"
+                harga: "{{ $produk->harga_jual }}"
             },
         @endforeach
     };
+
+    // Store customer names for validation
+    let customerNames = [
+        @foreach($customerList as $customer)
+            "{{ $customer->nama_customer }}",
+        @endforeach
+    ];
 
     // Array untuk menyimpan semua item yang ditambahkan
     let items = [];
@@ -217,34 +235,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Extra validation when customer input loses focus
+    customerInput.addEventListener("blur", function() {
+        if (this.value && !customerNames.includes(this.value)) {
+            showError("Customer dengan nama '" + this.value + "' tidak ditemukan dalam database.");
+            this.value = "";
+            customerIdInput.value = "";
+        }
+    });
+
     produkInput.addEventListener("input", function () {
         const selectedProduk = produkData[this.value];
         if (selectedProduk) {
             produkIdInput.value = selectedProduk.id;
-            hargaSatuanInput.value = selectedProduk.hargaSatuan;
+            hargaSatuanInput.value = selectedProduk.harga;
             jumlahInput.value = 1;
-            updateSatuanOptions(selectedProduk);
             updateHargaAkhir();
+        } else {
+            produkIdInput.value = "";
+            hargaSatuanInput.value = "";
+            hargaAkhirInput.value = "";
         }
     });
 
-    jenisSatuanSelect.addEventListener("change", updateHargaAkhir);
-    jumlahInput.addEventListener("input", updateHargaAkhir);
-
-    function updateSatuanOptions(produk) {
-        jenisSatuanSelect.innerHTML = "";
-        let optionUtama = document.createElement("option");
-        optionUtama.value = produk.satuanUtama;
-        optionUtama.textContent = produk.satuanUtama;
-        jenisSatuanSelect.appendChild(optionUtama);
-
-        if (produk.satuanKecil) {
-            let optionKecil = document.createElement("option");
-            optionKecil.value = produk.satuanKecil;
-            optionKecil.textContent = produk.satuanKecil;
-            jenisSatuanSelect.appendChild(optionKecil);
+    // Extra validation when product input loses focus
+    produkInput.addEventListener("blur", function() {
+        if (this.value && !produkData[this.value]) {
+            showError("Produk dengan nama '" + this.value + "' tidak ditemukan dalam database.");
+            this.value = "";
+            hargaSatuanInput.value = "";
+            hargaAkhirInput.value = "";
+            produkIdInput.value = "";
         }
-    }
+    });
+
+    jumlahInput.addEventListener("input", updateHargaAkhir);
 
     function updateHargaAkhir() {
         const selectedProduk = produkData[produkInput.value];
@@ -252,12 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let hargaAkhir = 0;
         let jumlah = jumlahInput.value || 1;
-
-        if (jenisSatuanSelect.value === selectedProduk.satuanUtama) {
-            hargaAkhir = selectedProduk.hargaSatuan * jumlah;
-        } else if (jenisSatuanSelect.value === selectedProduk.satuanKecil && selectedProduk.isiPerSatuan > 0) {
-            hargaAkhir = selectedProduk.hargaIsi * jumlah;
-        }
+        hargaAkhir = selectedProduk.harga * jumlah;
 
         hargaAkhirInput.value = hargaAkhir.toFixed(2);
     }
@@ -267,11 +287,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const produkId = produkIdInput.value;
         const hargaSatuan = hargaSatuanInput.value;
         const jumlah = jumlahInput.value;
-        const jenisSatuan = jenisSatuanSelect.value;
         const hargaJual = hargaAkhirInput.value;
 
         if (!namaProduk || !hargaSatuan || !jumlah || !hargaJual || !produkId) {
-            alert("Semua field produk harus diisi!");
+            showError("Semua field produk harus diisi!");
+            return;
+        }
+
+        // Validate product exists in database
+        if (!produkData[namaProduk]) {
+            showError("Produk dengan nama '" + namaProduk + "' tidak ditemukan dalam database.");
             return;
         }
 
@@ -281,7 +306,6 @@ document.addEventListener("DOMContentLoaded", function () {
             nama_produk: namaProduk,
             harga_satuan: parseFloat(hargaSatuan),
             jumlah: parseInt(jumlah),
-            jenis_satuan: jenisSatuan,
             sub_total: parseFloat(hargaJual)
         });
 
@@ -297,7 +321,6 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${namaProduk}</td>
             <td>Rp ${parseFloat(hargaSatuan).toLocaleString()}</td>
             <td>${jumlah}</td>
-            <td>${jenisSatuan}</td>
             <td>Rp ${parseFloat(hargaJual).toLocaleString()}</td>
             <td class="text-center">
                 <button type="button" class="btn btn-sm btn-outline-danger delete-item" data-index="${items.length - 1}">
@@ -311,7 +334,6 @@ document.addEventListener("DOMContentLoaded", function () {
         hargaSatuanInput.value = "";
         jumlahInput.value = "1";
         hargaAkhirInput.value = "";
-        jenisSatuanSelect.innerHTML = "";
 
         // Hitung ulang total tagihan dan subtotal
         updateTotalTagihan();
@@ -380,7 +402,13 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         
         if (items.length === 0) {
-            alert("Silakan tambahkan produk terlebih dahulu!");
+            showError("Silakan tambahkan produk terlebih dahulu!");
+            return;
+        }
+        
+        // Validate customer if entered
+        if (customerInput.value && !customerNames.includes(customerInput.value)) {
+            showError("Customer dengan nama '" + customerInput.value + "' tidak ditemukan dalam database.");
             return;
         }
         

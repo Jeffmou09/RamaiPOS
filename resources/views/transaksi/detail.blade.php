@@ -40,7 +40,6 @@
                         <tr class="bg-light">
                             <th>Nama Produk</th>
                             <th>Jumlah</th>
-                            <th>Satuan</th>
                             <th>Harga Satuan</th>
                             <th>Sub Total</th>
                         </tr>
@@ -50,7 +49,6 @@
                         <tr>
                             <td>{{ $detail->produk->nama_produk }}</td>
                             <td>{{ $detail->jumlah_barang }}</td>
-                            <td>{{ $detail->jenis_satuan }}</td>
                             <td>Rp {{ number_format($detail->sub_total / $detail->jumlah_barang, 2, ',', '.') }}</td>
                             <td>Rp {{ number_format($detail->sub_total, 2, ',', '.') }}</td>
                         </tr>
