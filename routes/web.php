@@ -15,6 +15,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/get-income-data', [DashboardController::class, 'getIncomeData']);
+    Route::get('/dashboard/get-filtered-data', [DashboardController::class, 'getFilteredData']);
 
     Route::get('/inputstok', [StokProdukController::class, 'index'])->name('inputstok');
     Route::post('/inputstok/store', [StokProdukController::class, 'store'])->name('inputstok.store');

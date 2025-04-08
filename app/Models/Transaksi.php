@@ -21,8 +21,8 @@ class Transaksi extends Model
         'tanggal_transaksi', 
         'diskon', 
         'jumlah_produk_terjual', 
-        'deskripsi',
-        'total_transaksi'
+        'total_transaksi',
+        'deskripsi'
     ];
 
     public function customer()

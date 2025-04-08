@@ -73,8 +73,7 @@
                                 <tr>
                                     <th scope="col" width="50"></th>
                                     <th scope="col">Nama Produk</th>
-                                    <th scope="col" class="text-end">DUS/SAK</th>
-                                    <th scope="col" class="text-end">PCS/KG</th>
+                                    <th scope="col" class="text-end">Jumlah</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -82,17 +81,12 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $product->nama_produk }}</td>
-                                    <td class="text-end">
-                                        {{ $product->jumlah_satuan_besar > 0 ? number_format($product->jumlah_satuan_besar) . ' ' . ($product->satuan == 'DUS' || $product->satuan == 'SAK' ? $product->satuan : 'DUS/SAK') : '-' }}
-                                    </td>
-                                    <td class="text-end">
-                                        {{ $product->jumlah_satuan_kecil > 0 ? number_format($product->jumlah_satuan_kecil) . ' ' . ($product->jenis_isi == 'PCS' || $product->jenis_isi == 'KG' ? $product->jenis_isi : 'PCS/KG') : '-' }}
-                                    </td>
+                                    <td class="text-end">{{ number_format($product->jumlah) }}</td>
                                 </tr>
                                 @endforeach
                                 @if(count($topProducts) == 0)
                                 <tr>
-                                    <td colspan="6" class="text-center py-3">Tidak ada data produk</td>
+                                    <td colspan="3" class="text-center py-3">Tidak ada data produk</td>
                                 </tr>
                                 @endif
                             </tbody>
@@ -217,7 +211,7 @@ function updateTable(tableSelector, data, type) {
     if (data.length === 0) {
         const noDataRow = `
             <tr>
-                <td colspan="${type === 'products' ? 4 : 3}" class="text-center py-3">
+                <td colspan="${type === 'products' ? 3 : 3}" class="text-center py-3">
                     ${type === 'products' ? 'Tidak ada data produk' : 'Tidak ada data customer'}
                 </td>
             </tr>
@@ -233,16 +227,7 @@ function updateTable(tableSelector, data, type) {
                 <tr>
                     <td>${index + 1}</td>
                     <td>${item.nama_produk}</td>
-                    <td class="text-end">
-                        ${item.jumlah_satuan_besar > 0 
-                            ? `${item.jumlah_satuan_besar.toLocaleString()} ${item.satuan === 'DUS' || item.satuan === 'SAK' ? item.satuan : 'DUS/SAK'}`
-                            : '-'}
-                    </td>
-                    <td class="text-end">
-                        ${item.jumlah_satuan_kecil > 0 
-                            ? `${item.jumlah_satuan_kecil.toLocaleString()} ${item.jenis_isi === 'PCS' || item.jenis_isi === 'KG' ? item.jenis_isi : 'PCS/KG'}`
-                            : '-'}
-                    </td>
+                    <td class="text-end">${item.jumlah.toLocaleString()}</td>
                 </tr>
             `;
         } else {
@@ -253,7 +238,7 @@ function updateTable(tableSelector, data, type) {
                         ${item.nama_customer}
                         <div class="small text-muted">${item.jumlah_transaksi} transaksi</div>
                     </td>
-                    <td class="text-end">Rp ${item.total_pembelian.toLocaleString()}</td>
+                    <td class="text-end">Rp ${parseInt(item.total_pembelian).toLocaleString()}</td>
                 </tr>
             `;
         }
