@@ -64,7 +64,7 @@
     <table>
         <thead>
             <tr>
-                <th>No</th>
+                <th>Kode Transaksi</th>
                 <th>Tanggal Transaksi</th>
                 <th>Customer</th>
                 <th>Jumlah Produk</th>
@@ -75,26 +75,26 @@
         <tbody>
             @if(count($transaksi) > 0)
                 @foreach($transaksi as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ date('d/m/Y', strtotime($item->tanggal_transaksi)) }}</td>
-                    <td>{{ $item->customer ? $item->customer->nama_customer : 'Umum' }}</td>
-                    <td class="text-right">{{ $item->jumlah_produk_terjual }}</td>
-                    <td class="text-right">Rp {{ number_format($item->diskon, 0, ',', '.') }}</td>
-                    <td class="text-right">Rp {{ number_format($item->total_transaksi, 0, ',', '.') }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ date('d/m/Y', strtotime($item->tanggal_transaksi)) }}</td>
+                        <td>{{ $item->customer ? $item->customer->nama_customer : 'Umum' }}</td>
+                        <td class="text-right">{{ $item->jumlah_produk_terjual }}</td>
+                        <td class="text-right">Rp {{ number_format($item->diskon, 0, ',', '.') }}</td>
+                        <td class="text-right">Rp {{ number_format($item->total_transaksi, 0, ',', '.') }}</td>
+                    </tr>
                 @endforeach
             @else
                 <tr>
-                    <td colspan="6" style="text-align: center">Tidak ada data transaksi dalam periode ini</td>
+                    <td colspan="7" style="text-align: center">Tidak ada data transaksi dalam periode ini</td>
                 </tr>
             @endif
         </tbody>
         <tfoot>
             <tr>
                 <th colspan="3" class="text-right">Total</th>
-                <th class="text-right"></th>
-                <th class="text-right">Rp {{ number_format($total_diskon, 0, ',', '.') }}</th> 
+                <th class="text-right">{{ $total_produk_terjual }}</th>
+                <th class="text-right">Rp {{ number_format($total_diskon, 0, ',', '.') }}</th>
                 <th class="text-right">Rp {{ number_format($total_penjualan, 0, ',', '.') }}</th>
             </tr>
         </tfoot>

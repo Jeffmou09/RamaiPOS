@@ -16,7 +16,7 @@
                                 <div class="bg-primary rounded-circle p-2 text-white me-3">
                                     <i class="fas fa-file-invoice"></i>
                                 </div>
-                                <h5 class="font-weight-bold m-0">List Transaksi</h5>
+                                <h5 class="font-weight-bold m-0">Laporan Transaksi</h5>
                             </div>
                             <p class="text-muted small mb-3">
                                 Menampilkan seluruh transaksi berdasarkan periode yang dipilih
@@ -54,7 +54,7 @@
                                 <div class="bg-success rounded-circle p-2 text-white me-3">
                                     <i class="fas fa-box"></i>
                                 </div>
-                                <h5 class="font-weight-bold m-0">Produk Terjual</h5>
+                                <h5 class="font-weight-bold m-0">Laporan Produk Terlaris</h5>
                             </div>
                             <p class="text-muted small mb-3">
                                 Menampilkan data produk yang terjual beserta jumlah dan total penjualannya
