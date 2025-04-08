@@ -52,7 +52,7 @@ class ProdukController extends Controller
         StokOpname::create([
             'id' => $nextId,
             'id_produk' => $produk->id,
-            'jenis_perubahan' => 'Tambah', // Or whatever value makes sense for new product
+            'jenis_perubahan' => 'Penambahan', // Or whatever value makes sense for new product
             'jumlah_perubahan' => $request->stok,
         ]);
         

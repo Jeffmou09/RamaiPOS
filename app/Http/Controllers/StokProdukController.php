@@ -13,8 +13,7 @@ class StokProdukController extends Controller
     public function index()
     {
         $produkList = Produk::all(); 
-        $stokProduk = StokProduk::orderBy('created_at', 'desc')->get();
-        return view('produk.inputstok', compact('produkList', 'stokProduk'));
+        return view('produk.inputstok', compact('produkList'));
     }
 
     public function store(Request $request)
@@ -23,60 +22,56 @@ class StokProdukController extends Controller
             'produk_id' => 'required|exists:produk,id',
             'aksi_stok' => 'required|in:tambah,kurang',
             'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required',
-            'harga_beli' => 'required|numeric|min:1',
+            'harga_beli' => 'required_if:aksi_stok,tambah|numeric|min:0',
         ]);
-
+        
         $produk = Produk::findOrFail($request->produk_id);
-        $stokProduk = StokProduk::where('id_produk', $request->produk_id)->first();
-
-        if (!$stokProduk) {
-            $stokProduk = StokProduk::create([
-                'produk_id' => $request->produk_id,
-                'stok_satuan_utama' => 0,
-                'stok_satuan_isi' => 0,
-            ]);
-        }
+        
         if ($request->aksi_stok === 'tambah') {
-            $stokProduk->stok_satuan_utama += $request->jumlah;
+            // Calculate weighted average for purchase price
+            $stokLama = $produk->stok;
+            $hargaBeliLama = $produk->harga_beli ?? 0;
+            $nilaiStokLama = $stokLama * $hargaBeliLama;
+            
+            // Update stock
+            $produk->stok += $request->jumlah;
+            
+            // Calculate new weighted average purchase price
+            $nilaiStokBaru = $request->jumlah * $request->harga_beli;
+            $totalNilai = $nilaiStokLama + $nilaiStokBaru;
+            $totalStok = $produk->stok;
+            
+            // Update average purchase price
+            if ($totalStok > 0) {
+                $produk->harga_beli = round($totalNilai / $totalStok, 2);
+            }
         } else {
-            $stokProduk->stok_satuan_utama -= $request->jumlah;
+            if ($produk->stok < $request->jumlah) {
+                return redirect()->back()->with('error', 'Stok tidak mencukupi untuk pengurangan!');
+            }
+            $produk->stok -= $request->jumlah;
         }
-
-        $stokProduk->save();
-
-        // Simpan riwayat stok opname
+        
+        $produk->save();
+        
+        // Record stock change in StokOpname table
         StokOpname::create([
             'id' => Str::uuid(),
-            'id_stok' => $stokProduk->id,
+            'id_produk' => $request->produk_id,
             'jenis_perubahan' => $request->aksi_stok === 'tambah' ? 'Penambahan' : 'Pengurangan',
-            'jumlah_perubahan' => $request->jumlah,
-            'satuan' => $request->satuan,
+            'jumlah_perubahan' => $request->jumlah
         ]);
-
-        if ($request->aksi_stok === 'tambah') {
-            $stokLama = $stokProduk->stok_satuan_utama - $request->jumlah;
-            $hargaBeliLama = $produk->harga_beli_per_satuan;
-            $totalStokBaru = $stokLama + $request->jumlah;
         
-            $hargaBeliBaru = (($stokLama * $hargaBeliLama) + ($request->jumlah * $request->harga_beli)) / $totalStokBaru;
-
-            $produk->harga_beli_per_satuan = round($hargaBeliBaru, 2);
-            $produk->harga_beli_per_isi = round($hargaBeliBaru / $produk->isi_per_satuan, 2);
-            $produk->save();
-        }
-        
-
         return redirect()->back()->with('success', 'Stok berhasil diperbarui!');
     }
 
     public function detail($id)
     {
-        $stok = StokProduk::with('produk')->findOrFail($id);
-        $stokOpname = StokOpname::where('id_stok', $id)
-                            ->orderBy('created_at', 'desc')
-                            ->get();
-        
-        return view('produk.stokdetail', compact('stok', 'stokOpname'));
+        $produk = Produk::findOrFail($id);
+        $stokOpnameList = StokOpname::where('id_produk', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('produk.stokdetail', compact('produk', 'stokOpnameList'));
     }
 }
