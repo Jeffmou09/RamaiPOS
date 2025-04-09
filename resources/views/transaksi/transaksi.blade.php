@@ -194,6 +194,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalAkhirElement = document.getElementById("total_akhir");
     const transaksiForm = document.getElementById("transaksiForm");
 
+    transaksiForm.addEventListener("keypress", function(e) {
+        if (e.key === "Enter" || e.keyCode === 13) {
+            e.preventDefault();
+            simpanItemBtn.click();
+            return false;
+        }
+    });
+
     // Helper function to show errors
     function showError(message) {
         errorMessage.textContent = message;
