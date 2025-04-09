@@ -38,7 +38,7 @@ class TransaksiController extends Controller
         DB::beginTransaction();
         
         try {
-            $today = date('dmY');
+            $today = date('Ymd');
             $latestTransaction = Transaksi::where('id', 'like', "T{$today}%")
                 ->orderBy('id', 'desc')
                 ->first();
@@ -92,13 +92,22 @@ class TransaksiController extends Controller
                 $produk->stok -= $item['jumlah'];
                 $produk->save();
                 
-                // Create stock opname record with sequential ID
-                $lastStokOpname = StokOpname::orderBy('id', 'desc')->first();
-                if ($lastStokOpname && strpos($lastStokOpname->id, 'S') === 0) {
-                    $lastId = (int)substr($lastStokOpname->id, 1);
-                    $nextId = 'S' . str_pad($lastId + 1, 6, '0', STR_PAD_LEFT);
+                $today = now()->format('Ymd');
+                $prefix = 'S' . $today;
+                
+                // Find the last StokOpname with today's date prefix
+                $lastStokOpname = StokOpname::where('id', 'like', $prefix . '%')
+                                            ->orderBy('id', 'desc')
+                                            ->first();
+                
+                if ($lastStokOpname) {
+                    // Extract the numeric part (last 4 characters) and increment
+                    $lastNumber = (int) substr($lastStokOpname->id, -4);
+                    $nextNumber = $lastNumber + 1;
+                    $nextId = $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
                 } else {
-                    $nextId = 'S000001';
+                    // First record for today
+                    $nextId = $prefix . '0001';
                 }
                 
                 $stokOpname = new StokOpname();
