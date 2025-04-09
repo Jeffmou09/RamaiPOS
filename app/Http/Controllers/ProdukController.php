@@ -70,7 +70,6 @@ class ProdukController extends Controller
     {
         $request->validate([
             'nama_produk' => 'required|string|max:255',
-            'stok' => 'required|integer|min:0',
             'harga_beli' => 'required|integer|min:0',
             'harga_jual' => 'required|integer|min:0',
         ]);
@@ -79,7 +78,6 @@ class ProdukController extends Controller
         
         $produk->update([
             'nama_produk' => $request->nama_produk,
-            'stok' => $request->stok,
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual,
         ]);
