@@ -33,14 +33,16 @@ class TransaksiController extends Controller
             'diskon' => 'nullable|integer|min:0',
             'deskripsi' => 'nullable|string|max:255',
         ]);
+        
         $items = json_decode($request->items_json, true);
-
         DB::beginTransaction();
+        
         try {
             $today = date('dmY');
             $latestTransaction = Transaksi::where('id', 'like', "T{$today}%")
                 ->orderBy('id', 'desc')
                 ->first();
+                
             if ($latestTransaction) {
                 // Extract sequence number and increment it
                 $sequence = (int)substr($latestTransaction->id, -5);
@@ -49,8 +51,10 @@ class TransaksiController extends Controller
                 // First transaction of the day
                 $nextSequence = 1;
             }
+            
             // Create the transaction ID (T + DDMMYYYY + 5-digit sequence)
             $transactionId = 'T' . $today . str_pad($nextSequence, 5, '0', STR_PAD_LEFT);
+            
             // Create transaksi record
             $transaksi = new Transaksi();
             $transaksi->id = $transactionId;
@@ -61,7 +65,7 @@ class TransaksiController extends Controller
             $transaksi->total_transaksi = $request->total_transaksi;
             $transaksi->deskripsi = $request->deskripsi;
             $transaksi->save();
-
+            
             foreach ($items as $index => $item) {
                 // Add detail transaction with sequential ID
                 $detail = new DetailTransaksi();
@@ -72,9 +76,9 @@ class TransaksiController extends Controller
                 $detail->jumlah_barang = $item['jumlah'];
                 $detail->sub_total = $item['sub_total'];
                 $detail->save();
+                
                 // Get related product
                 $produk = Produk::find($item['produk_id']);
-                
                 if (!$produk) {
                     throw new \Exception('Produk tidak ditemukan untuk ID: ' . $item['produk_id']);
                 }
@@ -88,19 +92,27 @@ class TransaksiController extends Controller
                 $produk->stok -= $item['jumlah'];
                 $produk->save();
                 
-                // Create stock opname record
+                // Create stock opname record with sequential ID
+                $lastStokOpname = StokOpname::orderBy('id', 'desc')->first();
+                if ($lastStokOpname && strpos($lastStokOpname->id, 'S') === 0) {
+                    $lastId = (int)substr($lastStokOpname->id, 1);
+                    $nextId = 'S' . str_pad($lastId + 1, 6, '0', STR_PAD_LEFT);
+                } else {
+                    $nextId = 'S000001';
+                }
+                
                 $stokOpname = new StokOpname();
-                $stokOpname->id = Str::uuid(); // Generate UUID for stock opname
+                $stokOpname->id = $nextId;
                 $stokOpname->id_produk = $produk->id;
                 $stokOpname->jenis_perubahan = 'Pengurangan';
                 $stokOpname->jumlah_perubahan = $item['jumlah'];
                 $stokOpname->save();
             }
+            
             DB::commit();
             session(['last_transaction_id' => $transaksi->id]);
             return redirect()->route('transaksi')
                 ->with('success', 'Transaksi berhasil disimpan!');
-                
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()
