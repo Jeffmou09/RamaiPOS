@@ -9,11 +9,26 @@
                     <i class="fas fa-plus me-1"></i> Tambah Produk
                 </a>
             </div>
+            
             @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             @endif
+            
+            <!-- Form Pencarian -->
+            <div class="mb-4">
+                <form action="{{ route('daftarproduk') }}" method="GET" class="d-flex gap-2">
+                    <div class="flex-grow-1">
+                        <input type="text" name="search" class="form-control" placeholder="Cari produk..." value="{{ $search ?? '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i> Cari
+                    </button>
+                </form>
+            </div>
+            
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -27,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($produk as $item)
+                        @forelse($produk as $item)
                         <tr>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->nama_produk }}</td>
@@ -49,9 +64,18 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-3">Tidak ada data produk</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-end mt-4">
+                {{ $produk->appends(['search' => $search ?? ''])->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

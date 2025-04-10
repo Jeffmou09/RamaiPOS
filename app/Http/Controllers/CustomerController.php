@@ -8,10 +8,22 @@ use Ramsey\Uuid\Guid\Guid;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::orderBy('created_at', 'desc')->get();
-        return view('customer.customer', compact('customers'));
+        $search = $request->input('search');
+        
+        $query = Customer::query();
+        
+        if ($search) {
+            $query->where('nama_customer', 'like', '%' . $search . '%')
+                  ->orWhere('no_hp', 'like', '%' . $search . '%')
+                  ->orWhere('alamat', 'like', '%' . $search . '%');
+        }
+        
+        $customers = $query->orderBy('created_at', 'desc')
+                           ->paginate(20);
+        
+        return view('customer.customer', compact('customers', 'search'));
     }
 
     // Menampilkan form tambah customer

@@ -145,6 +145,7 @@ class TransaksiController extends Controller
     public function history(Request $request)
     {
         $periode = $request->input('periode', 'today'); // Default: hari ini
+        $search = $request->input('search');
         
         $query = Transaksi::with(['detailTransaksi.produk', 'customer']);
         
@@ -164,11 +165,22 @@ class TransaksiController extends Controller
                 break;
         }
         
+        // Pencarian
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                  ->orWhereHas('customer', function($query) use ($search) {
+                      $query->where('nama_customer', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+        
         $transaksi = $query->orderBy('tanggal_transaksi', 'desc')
-                   ->orderBy('created_at', 'desc')
-                   ->get();
-    
-        return view('transaksi.history', compact('transaksi'));
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(20)
+                           ->appends(['periode' => $periode, 'search' => $search]);
+        
+        return view('transaksi.history', compact('transaksi', 'search', 'periode'));
     }
 
     public function detail($id)

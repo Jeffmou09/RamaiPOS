@@ -11,10 +11,20 @@ use Illuminate\Support\Facades\DB;
 
 class ProdukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $produk = Produk::all();
-        return view('produk.daftarproduk', compact('produk'));
+        $search = $request->query('search');
+        
+        $query = Produk::query();
+        
+        if ($search) {
+            $query->where('nama_produk', 'like', '%' . $search . '%')
+                  ->orWhere('id', 'like', '%' . $search . '%');
+        }
+        
+        $produk = $query->paginate(20);
+        
+        return view('produk.daftarproduk', compact('produk', 'search'));
     }
 
     public function create()
