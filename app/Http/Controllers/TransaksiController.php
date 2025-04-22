@@ -77,18 +77,15 @@ class TransaksiController extends Controller
                 $detail->sub_total = $item['sub_total'];
                 $detail->save();
                 
-                // Get related product
                 $produk = Produk::find($item['produk_id']);
                 if (!$produk) {
                     throw new \Exception('Produk tidak ditemukan untuk ID: ' . $item['produk_id']);
                 }
                 
-                // Check if stock is sufficient
                 if ($produk->stok < $item['jumlah']) {
                     throw new \Exception('Stok tidak mencukupi untuk produk: ' . $produk->nama_produk);
                 }
                 
-                // Update product stock
                 $produk->stok -= $item['jumlah'];
                 $produk->save();
                 

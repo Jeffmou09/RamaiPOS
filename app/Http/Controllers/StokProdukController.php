@@ -28,20 +28,16 @@ class StokProdukController extends Controller
         $produk = Produk::findOrFail($request->produk_id);
         
         if ($request->aksi_stok === 'tambah') {
-            // Calculate weighted average for purchase price
             $stokLama = $produk->stok;
             $hargaBeliLama = $produk->harga_beli ?? 0;
             $nilaiStokLama = $stokLama * $hargaBeliLama;
             
-            // Update stock
             $produk->stok += $request->jumlah;
             
-            // Calculate new weighted average purchase price
             $nilaiStokBaru = $request->jumlah * $request->harga_beli;
             $totalNilai = $nilaiStokLama + $nilaiStokBaru;
             $totalStok = $produk->stok;
             
-            // Update average purchase price
             if ($totalStok > 0) {
                 $produk->harga_beli = round($totalNilai / $totalStok, 2);
             }

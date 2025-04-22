@@ -41,7 +41,6 @@ class ProdukController extends Controller
             'harga_jual' => 'required|integer|min:0',
         ]);
         
-        // Create the product
         $produk = Produk::create([
             'nama_produk' => $request->nama_produk,
             'stok' => $request->stok,
@@ -51,27 +50,23 @@ class ProdukController extends Controller
         
         $today = now()->format('Ymd');
         $prefix = 'S' . $today;
-        
-        // Find the last StokOpname with today's date prefix
+
         $lastStokOpname = StokOpname::where('id', 'like', $prefix . '%')
                                     ->orderBy('id', 'desc')
                                     ->first();
         
         if ($lastStokOpname) {
-            // Extract the numeric part (last 4 characters) and increment
             $lastNumber = (int) substr($lastStokOpname->id, -4);
             $nextNumber = $lastNumber + 1;
             $nextId = $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
         } else {
-            // First record for today
             $nextId = $prefix . '0001';
         }
         
-        // Create StokOpname entry
         StokOpname::create([
             'id' => $nextId,
             'id_produk' => $produk->id,
-            'jenis_perubahan' => 'Penambahan', // Or whatever value makes sense for new product
+            'jenis_perubahan' => 'Penambahan', 
             'jumlah_perubahan' => $request->stok,
         ]);
         

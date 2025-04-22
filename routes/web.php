@@ -13,6 +13,9 @@ Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/emailcheck', [AuthController::class, 'showEmailForm'])->name('emailcheck');
+Route::post('send-credentials', [AuthController::class, 'sendCredentials'])->name('send.credentials');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/get-income-data', [DashboardController::class, 'getIncomeData']);
