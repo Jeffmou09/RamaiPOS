@@ -39,7 +39,7 @@ body {
 <body>
 <div class="container">
     <div class="header">
-        <h2>Informasi Login Baru Anda</h2>
+        <h2>Informasi Login Toko Ramai</h2>
     </div>
     <p>Halo,</p>
     <p>Anda telah meminta informasi login untuk akun Anda. Kami telah membuat password baru untuk Anda:</p>
