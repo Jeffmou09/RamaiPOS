@@ -1,6 +1,13 @@
 @extends('layouts.sidebar')
 @section('content')
 <div class="container-fluid pt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Dashboard</h4>
+        <a href="{{ route('transaksi') }}" class="btn btn-primary d-flex align-items-center">
+            <i class="bi bi-cart-plus me-2"></i> Buat Transaksi
+        </a>
+    </div>
+
     <div class="row mb-4">
         <!-- Total Produk Card -->
         <div class="col-md-4">

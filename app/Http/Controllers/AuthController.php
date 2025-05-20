@@ -23,25 +23,20 @@ class AuthController extends Controller
 
     public function sendCredentials(Request $request)
     {
-        // Validate the email
         $request->validate([
             'email' => 'required|email',
         ]);
         
-        // Check if email exists in users table
         $user = User::where('email', $request->email)->first();
         if (!$user) {
             return back()->with('error', 'Email tidak terdaftar dalam sistem kami.');
         }
         
-        // Set fixed password
         $newPassword = "password";
         
-        // Update user password
         $user->password = Hash::make($newPassword);
         $user->save();
         
-        // Send email with credentials
         try {
             Mail::to($user->email)->send(new CredentialReminder($user, $newPassword));
             \Log::info('Email berhasil dikirim ke: ' . $user->email);
