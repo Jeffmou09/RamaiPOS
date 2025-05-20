@@ -19,7 +19,8 @@ class StokOpname extends Model
         'id',
         'id_produk',
         'jenis_perubahan',
-        'jumlah_perubahan'
+        'jumlah_perubahan',
+        'deskripsi'
     ];
 
     public function produk()

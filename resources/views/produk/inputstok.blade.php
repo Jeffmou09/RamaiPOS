@@ -37,7 +37,11 @@
                     <label class="form-label">Harga Beli</label>
                     <input type="number" name="harga_beli" id="harga_beli" class="form-control" required>
                 </div>
-                <div class="col-md-1 d-flex align-items-end">
+                <div class="col-md-11 mt-3">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea name="deskripsi" class="form-control" rows="1" placeholder="Masukkan deskripsi stok opname (opsional)"></textarea>
+                </div>
+                <div class="col-md-1 mt-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-save me-1"></i> Simpan
                     </button>

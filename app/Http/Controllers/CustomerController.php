@@ -42,7 +42,6 @@ class CustomerController extends Controller
         ]);
 
         Customer::create([
-            'id' => Guid::uuid4()->toString(),
             'nama_customer' => $request->nama_customer,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,

@@ -59,6 +59,7 @@
                                     <th>Tanggal</th>
                                     <th>Jenis Perubahan</th>
                                     <th>Jumlah</th>
+                                    <th>Deskripsi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,11 +75,12 @@
                                         @endif
                                     </td>
                                     <td>{{ $opname->jumlah_perubahan }}</td>
+                                    <td>{{ $opname->deskripsi ?: '-' }}</td>
                                 </tr>
                                 @endforeach
                                 @if(count($stokOpnameList) == 0)
                                 <tr>
-                                    <td colspan="4" class="text-center py-3">Tidak ada data pergerakan stok</td>
+                                    <td colspan="5" class="text-center py-3">Tidak ada data pergerakan stok</td>
                                 </tr>
                                 @endif
                             </tbody>

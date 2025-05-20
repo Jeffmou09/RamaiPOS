@@ -23,6 +23,7 @@
                             <p><strong>ID Transaksi:</strong> {{ $transaksi->id }}</p>
                             <p><strong>Customer:</strong> {{ $transaksi->customer ? $transaksi->customer->nama_customer : 'Umum' }}</p>
                             <p><strong>Tanggal Transaksi:</strong> {{ date('d-m-Y', strtotime($transaksi->tanggal_transaksi)) }}</p>
+                            <p><strong>Deskripsi:</strong> {{ $transaksi->deskripsi ?? '-' }}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Diskon:</strong> Rp {{ number_format($transaksi->diskon, 2, ',', '.') }}</p>

@@ -107,11 +107,15 @@ class TransaksiController extends Controller
                     $nextId = $prefix . '0001';
                 }
                 
+                // Add description with transaction ID
+                $stokOpnameDesc = "Penjualan {$transaksi->id}";
+                
                 $stokOpname = new StokOpname();
                 $stokOpname->id = $nextId;
                 $stokOpname->id_produk = $produk->id;
                 $stokOpname->jenis_perubahan = 'Pengurangan';
                 $stokOpname->jumlah_perubahan = $item['jumlah'];
+                $stokOpname->deskripsi = $stokOpnameDesc;
                 $stokOpname->save();
             }
             
